@@ -20,12 +20,17 @@ import javax.json.JsonString;
  */
 public class Admin extends AuthSystem {
 
-    private static Scanner in;
     private static int managerCount;
     private static int employeeCount;
 
     public Admin() {
         super("managers.json");
+        in = new Scanner(System.in);
+
+    }
+
+    public Admin(String filePath) {
+        super(filePath);
         in = new Scanner(System.in);
     }
 

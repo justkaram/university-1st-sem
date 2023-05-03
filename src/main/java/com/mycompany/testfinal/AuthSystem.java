@@ -30,6 +30,7 @@ public class AuthSystem {
 
     private final String userName = "120220562";
     private final String passWord = "123456";
+    public static Scanner in;
     public static String jsonData = null;
     public static JsonObject jsonObject = null;
     private static String filePath;
@@ -39,7 +40,7 @@ public class AuthSystem {
         jsonReader();
     }
 
-    public boolean Login() {
+    public boolean login() {
         while (true) {
             Scanner in = new Scanner(System.in);
             System.out.println("Enter ID: ");
@@ -86,7 +87,7 @@ public class AuthSystem {
                 }
             }
             return "";
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return "";
         }
 

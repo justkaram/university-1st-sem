@@ -4,7 +4,8 @@
  */
 package com.mycompany.testfinal;
 
-import javax.json.JsonObject;
+import javax.json.JsonArray;
+import javax.json.JsonString;
 
 /**
  *
@@ -12,15 +13,39 @@ import javax.json.JsonObject;
  */
 public class Manager extends Admin {
 
-    private static String jsonData = null;
-    private static JsonObject jsonObject = null;
-
     public Manager() {
+        super("employee.json");
+        if (!Login()) {
+            System.out.println("User Id is not found or wrong pass");
+        }
+    }
+
+    @Override
+    public boolean login() {
+
+        System.out.println("Enter ID: ");
+        String user = in.next();
+        JsonArray array = jsonObject.getJsonArray(user);
+        System.out.println(array);
+        System.out.println("Enter Password: ");
+        String pass = in.next();
+        if (array == null) {
+            return false;
+        } else {
+            try {
+                if (((JsonString) array.get(1)).getString().equals(pass)) {
+                    return true;
+                }
+            } catch (NullPointerException e) {
+                return false;
+            }
+        }
+        return false;
 
     }
-    
-    public void Test(){
-        for (String key : jsonObject.keySet()){
+
+    public void Test() {
+        for (String key : jsonObject.keySet()) {
             System.out.println(jsonObject.getJsonArray(key));
         }
     }

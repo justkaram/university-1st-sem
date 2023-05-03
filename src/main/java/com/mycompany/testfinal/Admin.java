@@ -91,7 +91,8 @@ public class Admin extends AuthSystem {
 
     private boolean managerOperations(int choice) {
         try {
-            String managerId = String.valueOf(fastCheckId());
+            System.out.println("Enter Manager Id: ");
+            String managerId = fastCheckId(in.next());
             if (managerId.equals("")) {
                 return false;
             } else if (choice == 2) {
@@ -170,20 +171,6 @@ public class Admin extends AuthSystem {
 
     }
 
-    private String fastCheckId() {
-        /*
-        Checks if manager id exists in managers.json
-         */
-        System.out.println("Enter Manager Id: ");
-        long managerId = in.nextLong();
-        for (String key : jsonObject.keySet()) {
-            if (key.equals(String.valueOf(managerId))) {
-                return key;
-            }
-        }
-        return "";
-    }
-
     private void AddManager() {
         /*
         Creats an ArrayList with manager info and adds it to managers.json
@@ -244,8 +231,14 @@ public class Admin extends AuthSystem {
             if (choice == 1 || choice == 2) {
                 int proccess = choice == 2 ? 0 : 1;
                 String message = proccess == 1 ? ">>>>> Activate Manager >>>>>" : ">>>>> Deactivate Manager >>>>>";
+                String managerId = null;
                 System.out.println(message);
-                String managerId = String.valueOf(fastCheckId());
+                System.out.println("Enter Id: ");
+                managerId = fastCheckId(in.next());
+                if (managerId.equals("")) {
+                    System.out.println("Manager Not Found !!");
+                    return;
+                }
                 JsonObject mergedObj = null;
                 JsonArrayBuilder newArray = Json.createArrayBuilder();
                 JsonArray array = jsonObject.getJsonArray(managerId);

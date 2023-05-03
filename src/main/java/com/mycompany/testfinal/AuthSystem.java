@@ -75,16 +75,33 @@ public class AuthSystem {
 
     }
 
-    public void addNewToJson(String managerId, ArrayList someList) {
+    public String fastCheckId(String Id) {
+        /*
+        Checks if manager id exists in managers.json
+         */
+        try {
+            for (String key : jsonObject.keySet()) {
+                if (key.equals(Id)) {
+                    return key;
+                }
+            }
+            return "";
+        }catch (NullPointerException e){
+            return "";
+        }
+
+    }
+
+    public void addNewToJson(String Id, ArrayList someList) {
         JsonArrayBuilder jsonArray = jsonArrayCreator(someList);
         if (jsonData != null && !jsonData.isEmpty()) {
             JsonObject mergedJsonObject = Json.createObjectBuilder(jsonObject)
-                    .add(managerId, jsonArray)
+                    .add(Id, jsonArray)
                     .build();
             jsonObject = mergedJsonObject;
         } else {
             jsonObject = Json.createObjectBuilder()
-                    .add(managerId, jsonArray)
+                    .add(Id, jsonArray)
                     .build();
         }
 
@@ -92,9 +109,9 @@ public class AuthSystem {
 
     }
 
-    public void deleteFromJson(String managerId) {
+    public void deleteFromJson(String Id) {
         JsonObjectBuilder objBuilder = Json.createObjectBuilder(jsonObject);
-        objBuilder.remove(managerId);
+        objBuilder.remove(Id);
         JsonObject updateJsonObject = objBuilder.build();
         jsonWriter(updateJsonObject);
     }

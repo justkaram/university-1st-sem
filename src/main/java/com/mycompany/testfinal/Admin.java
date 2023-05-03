@@ -5,24 +5,13 @@
 package com.mycompany.testfinal;
 
 import java.util.Scanner;
-import java.io.*;
 import java.util.ArrayList;
 import javax.json.JsonArrayBuilder;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonWriter;
-import java.util.HashMap;
-import java.util.Map;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
-import javax.json.JsonWriterFactory;
-import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonParsingException;
 
 /**
  *
@@ -33,26 +22,10 @@ public class Admin extends AuthSystem {
     private static Scanner in;
     private static int managerCount;
     private static int employeeCount;
-    private static String jsonData = null;
-    private static JsonObject jsonObject = null;
 
     public Admin() {
+        super("managers.json");
         in = new Scanner(System.in);
-        this.jsonReader("managers.json");
-
-    }
-
-    private void jsonReader(String filePath) {
-        try {
-            jsonData = new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException e) {
-            System.out.println("Error occurred while trying to read managers.json");
-        }
-        try {
-            jsonObject = Json.createReader(new StringReader(jsonData)).readObject();
-        } catch (JsonParsingException e) {
-        }
-
     }
 
     public void LoginAdmin() {
@@ -102,7 +75,7 @@ public class Admin extends AuthSystem {
                 }
             }
 
-            jsonReader("managers.json");
+            jsonReader();
         }
     }
 
@@ -246,63 +219,6 @@ public class Admin extends AuthSystem {
 
         addNewToJson(String.valueOf(managerId), managerInfo);
         System.out.println("The manager has been added successfully");
-    }
-
-    private void deleteFromJson(String managerId) {
-        JsonObjectBuilder objBuilder = Json.createObjectBuilder(jsonObject);
-        objBuilder.remove(managerId);
-        JsonObject updateJsonObject = objBuilder.build();
-        jsonWriter(updateJsonObject);
-    }
-
-    private void addNewToJson(String managerId, ArrayList someList) {
-        JsonArrayBuilder jsonArray = jsonArrayCreator(someList);
-        if (jsonData != null && !jsonData.isEmpty()) {
-            JsonObject mergedJsonObject = Json.createObjectBuilder(jsonObject)
-                    .add(managerId, jsonArray)
-                    .build();
-            jsonObject = mergedJsonObject;
-//            System.out.println("Merged 8213721");
-//            System.out.println(jsonObject);
-        } else {
-            jsonObject = Json.createObjectBuilder()
-                    .add(managerId, jsonArray)
-                    .build();
-        }
-
-        jsonWriter(jsonObject);
-
-    }
-
-    private void jsonWriter(JsonObject obj) {
-        try {
-            Map<String, Boolean> config = new HashMap<>();
-            config.put(JsonGenerator.PRETTY_PRINTING, true);
-            JsonWriterFactory writerFactory = Json.createWriterFactory(config);
-            FileWriter fileWriter = new FileWriter("managers.json");
-            JsonWriter jsonWriter = writerFactory.createWriter(fileWriter);
-            jsonWriter.writeObject(obj);
-            jsonWriter.close();
-        } catch (IOException e) {
-            System.out.println("Error Occurred while trying to write object");
-        }
-    }
-
-    private JsonArrayBuilder jsonArrayCreator(ArrayList someList) {
-        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (Object o : someList.subList(1, someList.size())) {
-            if (o instanceof Long) {
-                jsonArray.add((Long) o);
-            } else if (o instanceof String) {
-                jsonArray.add((String) o);
-            } else if (o instanceof Integer) {
-                jsonArray.add((Integer) o);
-            } else if (o instanceof Double) {
-                jsonArray.add((Double) o);
-            }
-        }
-
-        return jsonArray;
     }
 
     private void statusManager() {

@@ -6,6 +6,7 @@ package com.mycompany.testfinal;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import javax.json.JsonArrayBuilder;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -53,7 +54,16 @@ public class Admin extends AuthSystem {
                                                                   9- Get Manager Count and Employee Count
                                                                   10- Exit
                                                                   """);
-            int userChoice = input.nextInt();
+            
+            
+            int userChoice = 0;
+            try{
+                userChoice = input.nextInt();
+            } catch (InputMismatchException e){
+                System.out.println("Input must be an Integer !!! ");
+                AdminInterFace();
+                
+            }
             switch (userChoice) {
                 case 10 -> {
                     break OUTER;
@@ -72,6 +82,7 @@ public class Admin extends AuthSystem {
                     statusManager();
                 }
                 default -> {
+                    System.out.println("Wrong Input !");
                 }
             }
 

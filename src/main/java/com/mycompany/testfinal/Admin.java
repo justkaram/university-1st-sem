@@ -68,7 +68,7 @@ public class Admin extends AuthSystem {
                     break OUTER;
                 }
                 case 1 ->
-                    AddManager();
+                    addManager();
                 case 2, 3, 4, 5 -> {
                     if (!managerOperations(userChoice)) {
                         System.out.println("Manager Id not found, check Id and try again");
@@ -171,7 +171,7 @@ public class Admin extends AuthSystem {
 
     }
 
-    private void AddManager() {
+    private void addManager() {
         /*
         Creats an ArrayList with manager info and adds it to managers.json
          */
@@ -228,7 +228,9 @@ public class Admin extends AuthSystem {
                                """);
 
             int choice = in.nextInt();
-            if (choice == 1 || choice == 2) {
+            if (choice == 3) {
+                break;
+            } else if (choice == 1 || choice == 2) {
                 int proccess = choice == 2 ? 0 : 1;
                 String message = proccess == 1 ? ">>>>> Activate Manager >>>>>" : ">>>>> Deactivate Manager >>>>>";
                 String managerId = null;
@@ -237,11 +239,19 @@ public class Admin extends AuthSystem {
                 managerId = fastCheckId(in.next());
                 if (managerId.equals("")) {
                     System.out.println("Manager Not Found !!");
-                    return;
+                    statusManager();
                 }
                 JsonObject mergedObj = null;
                 JsonArrayBuilder newArray = Json.createArrayBuilder();
                 JsonArray array = jsonObject.getJsonArray(managerId);
+                int status = ((JsonNumber) array.get(array.size() - 1)).intValue();
+                if (status == 1 && proccess == 1) {
+                    System.out.println("Account is already activated.");
+                    break;
+                } else if (status == 0 && proccess == 0) {
+                    System.out.println("Account is already activated.");
+                    break;
+                }
                 for (int i = 0; i < array.size(); i++) {
                     if (!(i == array.size() - 1)) {
                         newArray.add(array.get(i));
@@ -259,7 +269,8 @@ public class Admin extends AuthSystem {
                 break;
 
             } else {
-                break;
+                System.out.println("Wrong Input !!");
+                statusManager();
             }
         }
 

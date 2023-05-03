@@ -54,15 +54,14 @@ public class Admin extends AuthSystem {
                                                                   9- Get Manager Count and Employee Count
                                                                   10- Exit
                                                                   """);
-            
-            
+
             int userChoice = 0;
-            try{
+            try {
                 userChoice = input.nextInt();
-            } catch (InputMismatchException e){
+            } catch (InputMismatchException e) {
                 System.out.println("Input must be an Integer !!! ");
                 AdminInterFace();
-                
+
             }
             switch (userChoice) {
                 case 10 -> {

@@ -109,7 +109,9 @@ public class Admin extends AuthSystem {
     private boolean managerOperations(int choice) {
         try {
             String managerId = String.valueOf(fastCheckId());
-            if (choice == 2) {
+            if (managerId.equals("")) {
+                return false;
+            } else if (choice == 2) {
                 UpdatePassword(managerId);
                 System.out.println("Password Updated Successfully");
             } else if (choice == 3) {
@@ -196,7 +198,7 @@ public class Admin extends AuthSystem {
                 return key;
             }
         }
-        return null;
+        return "";
     }
 
     private void AddManager() {

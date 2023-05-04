@@ -30,10 +30,10 @@ public class AuthSystem {
 
     private final String userName = "120220562";
     private final String passWord = "123456";
-    public static Scanner in;
+    public static Scanner in = new Scanner(System.in);
     public static String jsonData = null;
     public static JsonObject jsonObject = null;
-    private static String filePath;
+    protected static String filePath;
 
     public AuthSystem(String filePath) {
         AuthSystem.filePath = filePath;
@@ -74,6 +74,11 @@ public class AuthSystem {
         } catch (JsonParsingException e) {
         }
 
+    }
+
+    public void switchFile(String fileName) {
+        filePath = fileName;
+        jsonReader();
     }
 
     public String fastCheckId(String Id) {

@@ -19,23 +19,14 @@ import javax.json.JsonString;
  * @author ASUS ROG
  */
 public class Admin extends AuthSystem {
-
     private static int managerCount;
     private static int employeeCount;
-
     public Admin() {
         super("managers.json");
-        in = new Scanner(System.in);
-
-    }
-
-    public Admin(String filePath) {
-        super(filePath);
-        in = new Scanner(System.in);
     }
 
     public void LoginAdmin() {
-        if (Login()) {
+        if (login()) {
             AdminInterFace();
         }
 
@@ -101,7 +92,7 @@ public class Admin extends AuthSystem {
             if (managerId.equals("")) {
                 return false;
             } else if (choice == 2) {
-                UpdatePassword(managerId);
+                updatePassword(managerId);
                 System.out.println("Password Updated Successfully");
             } else if (choice == 3) {
                 deleteFromJson(managerId);
@@ -181,7 +172,7 @@ public class Admin extends AuthSystem {
         Creats an ArrayList with manager info and adds it to managers.json
          */
 
-        managerCount += 1;
+        Admin.managerCount += 1;
 
         ArrayList managerInfo = new ArrayList();
         System.out.println("Enter Id: ");
@@ -281,7 +272,7 @@ public class Admin extends AuthSystem {
 
     }
 
-    private void UpdatePassword(String managerId) {
+    protected void updatePassword(String managerId) {
         System.out.println("Enter Password: ");
         String password = in.next();
         JsonObject mergedJsonObject = null;

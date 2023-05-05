@@ -19,8 +19,10 @@ import javax.json.JsonString;
  * @author ASUS ROG
  */
 public class Admin extends AuthSystem {
+
     private static int managerCount;
     private static int employeeCount;
+
     public Admin() {
         super("managers.json");
     }
@@ -92,13 +94,15 @@ public class Admin extends AuthSystem {
             if (managerId.equals("")) {
                 return false;
             } else if (choice == 2) {
-                updatePassword(managerId);
+                System.out.println("Enter Password: ");
+                String password = in.next();
+                updater(1, managerId, password);
                 System.out.println("Password Updated Successfully");
             } else if (choice == 3) {
                 deleteFromJson(managerId);
                 System.out.println("Manager has been deleted successfully");
             } else if (choice == 4) {
-                searchManager(managerId);
+                searchUser(managerId);
 
             } else if (choice == 5) {
                 managerReport(managerId);
@@ -112,8 +116,8 @@ public class Admin extends AuthSystem {
 
     }
 
-    private void searchManager(String managerId) {
-        JsonArray infoArray = jsonObject.getJsonArray(managerId);
+    protected void searchUser(String id) {
+        JsonArray infoArray = jsonObject.getJsonArray(id);
         JsonString name = (JsonString) infoArray.get(0);
         JsonNumber status = (JsonNumber) infoArray.get(infoArray.size() - 1);
         System.out.print("Name: " + name.getString());
@@ -214,7 +218,7 @@ public class Admin extends AuthSystem {
         System.out.println("The manager has been added successfully");
     }
 
-    private void statusManager() {
+    protected void statusManager() {
         while (true) {
             System.out.println("""
             >>>>> Activate & Deactivate >>>>>
@@ -227,20 +231,36 @@ public class Admin extends AuthSystem {
             if (choice == 3) {
                 break;
             } else if (choice == 1 || choice == 2) {
+                String user = "";
                 int proccess = choice == 2 ? 0 : 1;
-                String message = proccess == 1 ? ">>>>> Activate Manager >>>>>" : ">>>>> Deactivate Manager >>>>>";
-                String managerId = null;
+                if (filePath.equals("managers.json")) {
+                    user = "Manager";
+                } else if (filePath.equals("employee.json")) {
+                    user = "Employee";
+                }
+                String message = proccess == 1 ? ">>>>> Activate " + user + " >>>>>" : ">>>>> Deactivate " + user + " >>>>>";
                 System.out.println(message);
                 System.out.println("Enter Id: ");
-                managerId = fastCheckId(in.next());
-                if (managerId.equals("")) {
-                    System.out.println("Manager Not Found !!");
+                String id = fastCheckId(in.next());
+                if (id.equals("")) {
+                    System.out.println(user + " is Not Found !!");
                     statusManager();
                 }
                 JsonObject mergedObj = null;
                 JsonArrayBuilder newArray = Json.createArrayBuilder();
-                JsonArray array = jsonObject.getJsonArray(managerId);
-                int status = ((JsonNumber) array.get(array.size() - 1)).intValue();
+                JsonArray array = jsonObject.getJsonArray(id);
+                if (array == null) {
+                    System.out.println("array is empty");
+                    System.out.println(array);
+                }
+                int status = 0;
+                try {
+                    status = ((JsonNumber) array.get(array.size() - 1)).intValue();
+
+                } catch (NullPointerException e) {
+                    System.out.println("No Users Yet !");
+                }
+
                 if (status == 1 && proccess == 1) {
                     System.out.println("Account is already activated.");
                     break;
@@ -256,7 +276,7 @@ public class Admin extends AuthSystem {
                     }
                 }
                 mergedObj = Json.createObjectBuilder(jsonObject)
-                        .add(managerId, newArray)
+                        .add(id, newArray)
                         .build();
 
                 jsonWriter(mergedObj);
@@ -272,22 +292,19 @@ public class Admin extends AuthSystem {
 
     }
 
-    protected void updatePassword(String managerId) {
-        System.out.println("Enter Password: ");
-        String password = in.next();
+    protected void updater(int index, String id, String value) {
         JsonObject mergedJsonObject = null;
-
         JsonArrayBuilder newJsonArray = Json.createArrayBuilder();
-        JsonArray array = jsonObject.getJsonArray(managerId);
+        JsonArray array = jsonObject.getJsonArray(id);
         for (int i = 0; i < array.size(); i++) {
-            if (i == 1) {
-                newJsonArray.add(password);
+            if (i == index) {
+                newJsonArray.add(value);
             } else {
                 newJsonArray.add(array.get(i));
             }
         }
         mergedJsonObject = Json.createObjectBuilder(jsonObject)
-                .add(managerId, newJsonArray)
+                .add(id, newJsonArray)
                 .build();
 
         jsonWriter(mergedJsonObject);

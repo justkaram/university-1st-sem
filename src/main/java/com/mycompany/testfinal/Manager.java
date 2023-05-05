@@ -59,10 +59,14 @@ public class Manager extends Admin {
 
     }
 
-    public String fastCheckId(){
+    public String fastCheckId() {
         System.out.println("Enter Id");
-        String id = in.next(); 
-        return super.fastCheckId(id);
+        String id = in.next();
+        String idCheck = super.fastCheckId(id);
+        if (idCheck.equals("")) {
+            System.out.println("Employee id is not found :)");
+        }
+        return idCheck;
     }
 
     private void managerInterface() {
@@ -100,20 +104,42 @@ public class Manager extends Admin {
                     addEmployee();
                 }
                 case 2 -> {
-                   empId = fastCheckId();
-                   if (!(empId.equals(""))){
-                       updatePassword(empId);
-                       System.out.println("Employee Password has been changed Successfully.");
-                   }else{
-                       System.out.println("Employee id is not found :)");
-                   }
+                    empId = fastCheckId();
+                    if (!(empId.equals(""))) {
+                        System.out.println("Enter Password: ");
+                        String password = in.next();
+                        updater(1, empId, password);
+                        System.out.println("Employee Password has been changed Successfully.");
+                    }
                 }
-                case 3, 4, 5 -> {
-
+                case 3 -> {
+                    empId = fastCheckId();
+                    if (!(empId.equals(""))) {
+                        deleteFromJson(empId);
+                        System.out.println("Employee has been deleted.");
+                    }
+                }
+                case 4 -> {
+                    empId = fastCheckId();
+                    if (!(empId.equals(""))) {
+                        empReport(empId);
+                    }
+                }
+                case 5 -> {
+                    empId = fastCheckId();
+                    if (!(empId.equals(""))) {
+                        searchUser(empId);
+                    }
                 }
                 case 6 -> {
+                    allReport();
+                }
+                case 7 -> {
+                    statusManager();
                 }
                 case 8 -> {
+                    managerAttendance();
+                    switchFile("employee.json");
                 }
                 default -> {
                     System.out.println("Wrong Input !");
@@ -156,10 +182,13 @@ public class Manager extends Admin {
         int employeeType = in.nextInt();
         employeeInfo.add(employeeType);
 
+        employeeInfo.add("Not Signed yet");
+        employeeInfo.add("Not Signed yet");
+
         System.out.println("Enter Status: ");
-        int managerStatus = in.nextInt();
-        if (managerStatus == 0 || managerStatus == 1) {
-            employeeInfo.add(managerStatus);
+        int empStatus = in.nextInt();
+        if (empStatus == 0 || empStatus == 1) {
+            employeeInfo.add(empStatus);
         } else {
             System.out.println("employee Status must be either 0 or 1 !");
             return;
@@ -167,6 +196,95 @@ public class Manager extends Admin {
 
         addNewToJson(String.valueOf(employeeId), employeeInfo);
         System.out.println("The employee has been added successfully");
+    }
+
+    private void empReport(String empId) {
+        String sep = " || ";
+        JsonArray infoArray = jsonObject.getJsonArray(empId);
+        JsonString name = (JsonString) infoArray.get(0);
+        JsonString email = (JsonString) infoArray.get(2);
+        JsonString phone = (JsonString) infoArray.get(3);
+        JsonNumber empType = (JsonNumber) infoArray.get(4);
+        JsonString checkIn = (JsonString) infoArray.get(5);
+        JsonString checkOut = (JsonString) infoArray.get(6);
+        JsonNumber status = (JsonNumber) infoArray.get(infoArray.size() - 1);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Id: ")
+                .append(empId)
+                .append(sep)
+                .append("Name: ")
+                .append(name.getString())
+                .append(sep)
+                .append("Email: ")
+                .append(email.getString())
+                .append(sep)
+                .append("Phone: ")
+                .append(phone.getString())
+                .append(sep)
+                .append("Employee Type: ")
+                .append(empType)
+                .append(sep)
+                .append("Status: ")
+                .append(status)
+                .append(sep)
+                .append("Check In: ")
+                .append(checkIn.getString())
+                .append(sep)
+                .append("Check Out: ")
+                .append(checkOut.getString());
+
+        System.out.println(sb.toString());
+
+    }
+
+    private void allReport() {
+        try {
+            for (String key : jsonObject.keySet()) {
+                empReport(key);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("No Employees Yet :)");
+        }
+    }
+
+    private void managerAttendance() {
+        switchFile("managers.json");
+        try {
+            while (true) {
+                System.out.println("""
+                               >>>>> Attendance >>>>>
+                               1- Time of attendance
+                               2- Time of leaving
+                               3- Exit                         
+                               """);
+
+                int choice;
+                String timeMessage = "Enter the time ";
+                choice = in.nextInt();
+                String time;
+                if (choice == 1) {
+                    System.out.println(timeMessage);
+                    time = in.next();
+                    updater(4, managerId, time);
+                    break;
+                } else if (choice == 2) {
+                    System.out.println(timeMessage);
+                    time = in.next();
+                    updater(5, managerId, time);
+                    break;
+                } else if (choice == 3) {
+                    break;
+                } else {
+                    System.out.println("Invalid Input");
+
+                }
+
+            }
+        } catch (InputMismatchException | NullPointerException e) {
+            System.out.println("Invalid Input");
+
+        }
+
     }
 
 }

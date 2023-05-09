@@ -19,6 +19,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonString;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
@@ -69,6 +70,7 @@ public class AuthSystem {
         try {
             jsonData = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {
+            System.out.println(e.getClass());
             System.out.println("Error occurred while trying to read managers.json");
         }
         try {
@@ -101,11 +103,12 @@ public class AuthSystem {
     }
 
     public void addNewToJson(String Id, ArrayList someList) {
-        JsonArrayBuilder jsonArray = jsonArrayCreator(someList);
+        JsonArray jsonArray = jsonArrayCreator(someList);
         if (jsonData != null && !jsonData.isEmpty()) {
             JsonObject mergedJsonObject = Json.createObjectBuilder(jsonObject)
                     .add(Id, jsonArray)
                     .build();
+            System.out.println("kskakksad");
             jsonObject = mergedJsonObject;
         } else {
             jsonObject = Json.createObjectBuilder()
@@ -138,21 +141,75 @@ public class AuthSystem {
         }
     }
 
-    public JsonArrayBuilder jsonArrayCreator(ArrayList someList) {
+    protected void updaterHoliday(String id, ArrayList newList) {
+        JsonObject mergedJsonObject = null;
+        JsonArrayBuilder allJsonArrays = Json.createArrayBuilder();
+        JsonArray arrayAll = jsonObject.getJsonArray(id);
+        for (int i = 0; i < arrayAll.size(); i++) {
+            JsonArray singleArray = arrayAll.getJsonArray(i);
+            JsonArrayBuilder newJsonArray = Json.createArrayBuilder();
+            for (int j = 0; j < singleArray.size(); j++) {
+                newJsonArray.add(singleArray.get(j));
+            }
+            allJsonArrays.add(newJsonArray);
+        }
+
+        allJsonArrays.add(jsonArrayCreator(newList));
+        mergedJsonObject = Json.createObjectBuilder(jsonObject)
+                .add(id, allJsonArrays)
+                .build();
+
+        jsonObject = mergedJsonObject;
+        jsonWriter(mergedJsonObject);
+
+    }
+
+    public JsonArray jsonArrayCreator(ArrayList someList) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (Object o : someList.subList(1, someList.size())) {
-            if (o instanceof Long) {
-                jsonArray.add((Long) o);
-            } else if (o instanceof String) {
+        for (Object o : someList) {
+            if (o instanceof String) {
                 jsonArray.add((String) o);
             } else if (o instanceof Integer) {
                 jsonArray.add((Integer) o);
-            } else if (o instanceof Double) {
-                jsonArray.add((Double) o);
             }
         }
-        
-        return jsonArray;
+        JsonArray check = jsonArray.build();
+        return check;
+    }
+
+    public void holidaysViewer(String managerId) {
+        System.out.println(">>>>> My Holidays <<<<<");
+        JsonArray holidays = jsonObject.getJsonArray(managerId);
+        if (holidays.isEmpty()) {
+            System.out.println("You don't have any holidays requests yet !");
+            return;
+        }
+        for (Object o : holidays) {
+            JsonArray singleHoliday = (JsonArray) o;
+            String name = ((JsonString) singleHoliday.get(0)).getString();
+            String reason = ((JsonString) singleHoliday.get(1)).getString();
+            String details = ((JsonString) singleHoliday.get(2)).getString();
+            String date = ((JsonString) singleHoliday.get(3)).getString();
+            int checked = ((JsonNumber) singleHoliday.get(4)).intValue();
+            String sep = " || ";
+            StringBuilder sb = new StringBuilder();
+            sb.append("Name: ")
+                    .append(name)
+                    .append(sep)
+                    .append("Reason: ")
+                    .append(reason)
+                    .append(sep)
+                    .append("Details: ")
+                    .append(details)
+                    .append(sep)
+                    .append("Date: ")
+                    .append(date)
+                    .append(sep)
+                    .append("Check: ")
+                    .append(checked);
+            System.out.println(sb);
+        }
+
     }
 
 }

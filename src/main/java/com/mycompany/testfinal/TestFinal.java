@@ -13,15 +13,21 @@ import java.util.Scanner;
 public class TestFinal {
 
     public static void main(String[] args) {
+        OUTER:
         while (true) {
             int loginChoice = Login();
-            if (loginChoice == 5) {
-                break;
-            } else if (loginChoice == 1) {
-                Admin admin = new Admin();
-                admin.LoginAdmin();
-            } else if (loginChoice == 2) {
-                Manager manager = new Manager();
+            switch (loginChoice) {
+                case 5:
+                    break OUTER;
+                case 1:
+                    Admin admin = new Admin();
+                    admin.LoginAdmin();
+                    break;
+                case 2:
+                    Manager manager = new Manager();
+                    break;
+                default:
+                    break;
             }
         }
     }

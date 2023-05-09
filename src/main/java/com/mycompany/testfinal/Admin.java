@@ -35,7 +35,6 @@ public class Admin extends AuthSystem {
     }
 
     private void AdminInterFace() {
-        Scanner input = new Scanner(System.in);
         System.out.println(">>>>> Welcome " + super.getUserName() + " >>>>>");
         OUTER:
         while (true) {
@@ -53,13 +52,12 @@ public class Admin extends AuthSystem {
                                                                   10- Exit
                                                                   """);
 
+            Scanner input = new Scanner(System.in);
             int userChoice = 0;
             try {
                 userChoice = input.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Input must be an Integer !!! ");
-                AdminInterFace();
-
             }
             switch (userChoice) {
                 case 10 -> {
@@ -181,8 +179,6 @@ public class Admin extends AuthSystem {
         ArrayList managerInfo = new ArrayList();
         System.out.println("Enter Id: ");
         long managerId = in.nextLong();
-        managerInfo.add(managerId);
-
         System.out.println("Enter Name: ");
         in.nextLine();
         String managerName = in.next();
@@ -311,42 +307,7 @@ public class Admin extends AuthSystem {
 
     }
 
-    protected void updater(String id, ArrayList newList) {
-        JsonObject mergedJsonObject = null;
-        JsonArrayBuilder allJsonArrays = Json.createArrayBuilder();
-        JsonArray arrayAll = jsonObject.getJsonArray(id);
-        for (int i = 0; i < arrayAll.size(); i++) {
-            JsonArray singleArray = arrayAll.getJsonArray(i);
-            System.out.println(singleArray);
-            JsonArrayBuilder newJsonArray = Json.createArrayBuilder();
-            for (int j = 0; j < singleArray.size(); j++) {
-                newJsonArray.add(singleArray.get(j));
-            }
-            allJsonArrays.add(newJsonArray);
-        }
-          
-//        jsonArrayCreator2(newList);
-        allJsonArrays.add(jsonArrayCreator2(newList));
-        mergedJsonObject = Json.createObjectBuilder(jsonObject)
-                .add(id, allJsonArrays)
-                .build();
 
-        jsonObject = mergedJsonObject;
-        jsonWriter(mergedJsonObject);
 
-    }
-
-    public JsonArray jsonArrayCreator2(ArrayList someList) {
-        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (Object o : someList.subList(0, someList.size())) {
-            if (o instanceof String) {
-                jsonArray.add((String) o);
-            }
-        }
-        JsonArray check = jsonArray.build();
-        return check;
-//        return jsonArray;
-
-    }
 
 }

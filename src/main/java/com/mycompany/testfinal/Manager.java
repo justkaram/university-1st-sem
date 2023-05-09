@@ -5,26 +5,14 @@
 package com.mycompany.testfinal;
 
 import static com.mycompany.testfinal.AuthSystem.in;
+import static com.mycompany.testfinal.AuthSystem.jsonObject;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import static java.nio.file.Files.list;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import static java.rmi.Naming.list;
 import java.util.ArrayList;
-import static java.util.Collections.list;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  *
@@ -307,11 +295,17 @@ public class Manager extends Admin {
 
     protected void Holidays() {
         switchFile("holidays.json");
+        JsonArray holidays = jsonObject.getJsonArray(managerId);
+        if (holidays == null) {
+            ArrayList emptyHoliday = new ArrayList();
+            addNewToJson(managerId, emptyHoliday);
+        }
+
         try {
             OUTER:
             while (true) {
                 System.out.println("""
-                                                   >>>>> Attendance >>>>>
+                                                   >>>>> Holidays >>>>>
                                                    1- My Holidays.
                                                    2- Create Holiday
                                                    3- Exit
@@ -331,7 +325,7 @@ public class Manager extends Admin {
                     }
                     break;
                     case 1:
-                        myHolidays();
+                        holidaysViewer(managerId);
                         break;
                     default:
                         break;
@@ -362,45 +356,12 @@ public class Manager extends Admin {
         System.out.println("Enter Date: ");
         String date = in.next();
         holidayArray.add(date);
-        super.updater(managerId, holidayArray);
+        
+        // holiday status , default value is 0, an admin must accept it.
+        holidayArray.add(0);
+        super.updaterHoliday(managerId, holidayArray);
     }
 
-    private void viewHolidays() {
 
-    }
-
-    public JsonArrayBuilder jsonArrayCreator(ArrayList someList) {
-        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (int i = 0; i < someList.size(); i++) {
-            for (Object o : someList.subList(1, someList.size())) {
-                if (o instanceof Long) {
-                    jsonArray.add((Long) o);
-                } else if (o instanceof String) {
-                    jsonArray.add((String) o);
-                } else if (o instanceof Integer) {
-                    jsonArray.add((Integer) o);
-                } else if (o instanceof Double) {
-                    jsonArray.add((Double) o);
-                }
-            }
-        }
-
-        return jsonArray;
-    }
-
-    public void myHolidays() {
-        JsonArray holidays = jsonObject.getJsonArray(managerId);
-        System.out.println(holidays);
-        for (Object ar : holidays) {
-            if (ar instanceof JsonArray) {
-                JsonArray singleHoliday = (JsonArray) ar;
-                for (int i = 0; i < singleHoliday.size(); i++) {
-                    System.out.println(((JsonString) singleHoliday.get(i)).getString());
-                }
-                System.out.println("----------------------------------------");
-            }
-        }
-
-    }
 
 }

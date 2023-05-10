@@ -319,7 +319,6 @@ public class Manager extends Admin {
                         try {
                         createHoliday();
                     } catch (IOException e) {
-                        System.out.println("asdsadasd");
                         System.out.println(e.getClass());
 
                     }

@@ -27,6 +27,22 @@ public class Admin extends AuthSystem {
         super("managers.json");
     }
 
+    protected void managerCounter() {
+        try {
+            switchFile("managers.json");
+            System.out.println(jsonObject.keySet().toString());
+            managerCount = jsonObject.keySet().toArray().length;
+            System.out.println(managerCount);
+        } catch (NullPointerException e) {
+            System.out.println("No Managers Yet :)");
+        }
+
+    }
+
+    protected void employeeCounter() {
+        Admin.employeeCount += 1;
+    }
+
     public void LoginAdmin() {
         if (login()) {
             AdminInterFace();
@@ -35,6 +51,7 @@ public class Admin extends AuthSystem {
     }
 
     private void AdminInterFace() {
+        switchFile("managers.json");
         System.out.println(">>>>> Welcome " + super.getUserName() + " >>>>>");
         OUTER:
         while (true) {
@@ -75,6 +92,9 @@ public class Admin extends AuthSystem {
                 }
                 case 8 -> {
                     statusManager();
+                }
+                case 9 -> {
+                    managerCounter();
                 }
                 default -> {
                     System.out.println("Wrong Input !");
@@ -159,12 +179,13 @@ public class Admin extends AuthSystem {
     }
 
     private void allReport() {
-        try {
-            for (String key : jsonObject.keySet()) {
-                managerReport(key);
-            }
-        } catch (NullPointerException e) {
-            System.out.println("No managers yet :) ");
+        if (jsonObject.keySet().toArray().length < 1) {
+            System.out.println("No Managers Yet :)");
+            return;
+        }
+
+        for (String key : jsonObject.keySet()) {
+            managerReport(key);
         }
 
     }
@@ -306,8 +327,5 @@ public class Admin extends AuthSystem {
         jsonWriter(mergedJsonObject);
 
     }
-
-
-
 
 }

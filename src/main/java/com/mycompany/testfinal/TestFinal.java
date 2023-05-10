@@ -16,7 +16,7 @@ public class TestFinal {
         OUTER:
         while (true) {
             int loginChoice = Login();
-            switch (loginChoice) {
+            switch (loginChoice) { 
                 case 5:
                     break OUTER;
                 case 1:

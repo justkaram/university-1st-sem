@@ -73,9 +73,11 @@ public class AuthSystem {
             System.out.println(e.getClass());
             System.out.println("Error occurred while trying to read managers.json");
         }
+
         try {
             jsonObject = Json.createReader(new StringReader(jsonData)).readObject();
         } catch (JsonParsingException e) {
+            jsonObject = Json.createObjectBuilder().build();
         }
 
     }
@@ -108,7 +110,6 @@ public class AuthSystem {
             JsonObject mergedJsonObject = Json.createObjectBuilder(jsonObject)
                     .add(Id, jsonArray)
                     .build();
-            System.out.println("kskakksad");
             jsonObject = mergedJsonObject;
         } else {
             jsonObject = Json.createObjectBuilder()

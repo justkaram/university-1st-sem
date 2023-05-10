@@ -178,6 +178,79 @@ public class AuthSystem {
         return check;
     }
 
+    protected void statusUpdater() {
+        while (true) {
+            System.out.println("""
+            >>>>> Activate & Deactivate >>>>>
+            -1 Activate
+            -2 Deactivate
+            -3 Exit
+                               """);
+
+            int choice = in.nextInt();
+            if (choice == 3) {
+                break;
+            } else if (choice == 1 || choice == 2) {
+                String user = "";
+                int proccess = choice == 2 ? 0 : 1;
+                if (filePath.equals("managers.json")) {
+                    user = "Manager";
+                } else if (filePath.equals("employee.json")) {
+                    user = "Employee";
+                }
+                String message = proccess == 1 ? ">>>>> Activate " + user + " >>>>>" : ">>>>> Deactivate " + user + " >>>>>";
+                System.out.println(message);
+                System.out.println("Enter Id: ");
+                String id = fastCheckId(in.next());
+                if (id.equals("")) {
+                    System.out.println(user + " is Not Found !!");
+                    return;
+                }
+                JsonObject mergedObj = null;
+                JsonArray array = jsonObject.getJsonArray(id);
+                if (array == null) {
+                    System.out.println("array is empty");
+
+                }
+                int status = 0;
+                try {
+                    status = ((JsonNumber) array.get(array.size() - 1)).intValue();
+                } catch (NullPointerException e) {
+                    System.out.println("No Users Yet !");
+                }
+
+                if (status == 1 && proccess == 1) {
+                    System.out.println("Account is already activated.");
+                    return;
+                } else if (status == 0 && proccess == 0) {
+                    System.out.println("Account is already deactivated.");
+                    return;
+                }
+                JsonArrayBuilder newArray = Json.createArrayBuilder();
+                for (int i = 0; i < array.size(); i++) {
+                    if (!(i == array.size() - 1)) {
+                        newArray.add(array.get(i));
+                    } else {
+                        newArray.add(Json.createValue(proccess));
+                    }
+                }
+                mergedObj = Json.createObjectBuilder(jsonObject)
+                        .add(id, newArray)
+                        .build();
+
+                jsonWriter(mergedObj);
+                String result = proccess == 1 ? "The Account has been Activated" : "The Account has been disabled";
+                System.out.println(result);
+                break;
+
+            } else {
+                System.out.println("Wrong Input !!");
+                statusUpdater();
+            }
+        }
+
+    }
+
     public void holidaysViewer(String managerId) {
         System.out.println(">>>>> My Holidays <<<<<");
         JsonArray holidays = jsonObject.getJsonArray(managerId);
@@ -206,7 +279,7 @@ public class AuthSystem {
                     .append("Date: ")
                     .append(date)
                     .append(sep)
-                    .append("Check: ")
+                    .append("Checked: ")
                     .append(checked);
             System.out.println(sb);
         }

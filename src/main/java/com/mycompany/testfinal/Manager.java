@@ -73,10 +73,12 @@ public class Manager extends Admin {
     }
 
     private void managerInterface() {
+      
         Scanner input = new Scanner(System.in);
         System.out.println(">>>>> Welcome " + managerId + " >>>>>");
         OUTER:
         while (true) {
+            switchFile("employee.json");
             System.out.println("""
                                            ----------------------------------------------------------------
                                                                   1- Add Employee
@@ -138,7 +140,7 @@ public class Manager extends Admin {
                     allReport();
                 }
                 case 7 -> {
-                    statusManager();
+                    statusUpdater();
                 }
                 case 8 -> {
                     managerAttendance();
@@ -244,13 +246,14 @@ public class Manager extends Admin {
     }
 
     private void allReport() {
-        try {
-            for (String key : jsonObject.keySet()) {
-                empReport(key);
-            }
-        } catch (NullPointerException e) {
+        if (jsonObject.keySet().toArray().length < 1) {
             System.out.println("No Employees Yet :)");
         }
+
+        for (String key : jsonObject.keySet()) {
+            empReport(key);
+        }
+
     }
 
     private void managerAttendance() {
@@ -355,12 +358,10 @@ public class Manager extends Admin {
         System.out.println("Enter Date: ");
         String date = in.next();
         holidayArray.add(date);
-        
+
         // holiday status , default value is 0, an admin must accept it.
         holidayArray.add(0);
         super.updaterHoliday(managerId, holidayArray);
     }
-
-
 
 }

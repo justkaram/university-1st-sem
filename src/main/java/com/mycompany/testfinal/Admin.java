@@ -44,7 +44,7 @@ public class Admin extends AuthSystem {
     }
 
     public void LoginAdmin() {
-        if (login()) {
+        if (loginAdmin()) {
             AdminInterFace();
         }
 
@@ -90,6 +90,9 @@ public class Admin extends AuthSystem {
                 case 6 -> {
                     allReport();
                 }
+                case 7 -> {
+                    holidays();
+                }
                 case 8 -> {
                     statusUpdater();
                 }
@@ -104,8 +107,6 @@ public class Admin extends AuthSystem {
             jsonReader();
         }
     }
-    
-
 
     private boolean managerOperations(int choice) {
         try {
@@ -237,7 +238,54 @@ public class Admin extends AuthSystem {
         System.out.println("The manager has been added successfully");
     }
 
+    private void holidays() {
+        System.out.println(">>>>> Welcome Requests >>>>>");
+        OUTER:
+        while (true) {
+            switchFile("holidays.json");
+            System.out.println("""
+                                                                  1- View Holiday Requests
+                                                                  2- Accept the holiday
+                                                                  3- Reject the holiday
+                                                                  4- Exit
+                                                                  """);
+
+            int userChoice;
+            userChoice = in.nextInt();
+            switch (userChoice) {
+                case 4 -> {
+                    break OUTER;
+                }
+                case 1 -> {
+                    System.out.println(">>>>> All Holiday Requests <<<<<");
+                    viewAllHolidays();
+                }
+                case 2 -> {
+                    
+                }
+                case 3 -> {
+
+                }
+                default -> {
+                    System.out.println("Invalid Choice");
+                }
+            }
+        }
+    }
+
+    private void viewAllHolidays() {
+        for (String key : jsonObject.keySet()) {
+            holidaysViewer(key);
+        }
+    }
     
+    private void acceptHoliday(){
+        System.out.println(">>>>> Accept the holiday <<<<<");
+        System.out.println("Enter the id: ");
+        String id = in.next();
+
+        
+    }
 
     protected void updater(int index, String id, String value) {
         JsonObject mergedJsonObject = null;

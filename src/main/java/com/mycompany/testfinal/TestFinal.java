@@ -17,17 +17,21 @@ public class TestFinal {
         while (true) {
             int loginChoice = Login();
             switch (loginChoice) { 
-                case 5:
+                case 5 -> {
                     break OUTER;
-                case 1:
+                }
+                case 1 -> {
                     Admin admin = new Admin();
                     admin.LoginAdmin();
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     Manager manager = new Manager();
-                    break;
-                default:
-                    break;
+                }
+                case 3 ->{
+                    Employee emp = new Employee();
+                }
+                default -> {
+                }
             }
         }
     }

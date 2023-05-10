@@ -22,43 +22,48 @@ public class Manager extends Admin {
 
     private boolean checkStatus = true;
     private String managerId;
-    private String managerName;
     private String empId;
 
     public Manager() {
-        if (!loginManager()) {
-            if (!checkStatus) {
-                System.out.println("Your Account is disabled");
-            } else {
-                System.out.println("User id is not found or password is wrong.");
-            }
+        if (login().equals("")) {
+            System.out.println("User id is not found or password is wrong.");
         } else {
-            switchFile("employee.json");
-            managerInterface();
+            if (!checkStatus) {
+                System.out.println("Your Account is disabled !!");
+            } else {
+                switchFile("employee.json");
+                managerInterface();
+            }
         }
     }
 
-    public boolean loginManager() {
+    public Manager(String fromChild) {
+        switchFile(fromChild);
+    }
+
+    public String login() {
         System.out.println("Enter ID: ");
         String user = in.next();
         JsonArray array = jsonObject.getJsonArray(user);
         System.out.println("Enter Password: ");
         String pass = in.next();
         if (array == null) {
-            return false;
+            return "";
         } else {
             try {
                 boolean checkPass = ((JsonString) array.get(1)).getString().equals(pass);
                 checkStatus = ((JsonNumber) array.get(array.size() - 1)).intValue() == 1;
                 if (checkPass && checkStatus) {
                     managerId = user;
-                    return true;
+                    return user;
+                } else if (checkPass && (!checkStatus)) {
+                    return "disabled";
                 }
             } catch (NullPointerException e) {
-                return false;
+                return "";
             }
         }
-        return false;
+        return "";
 
     }
 
@@ -73,7 +78,7 @@ public class Manager extends Admin {
     }
 
     private void managerInterface() {
-      
+
         Scanner input = new Scanner(System.in);
         System.out.println(">>>>> Welcome " + managerId + " >>>>>");
         OUTER:
@@ -143,11 +148,12 @@ public class Manager extends Admin {
                     statusUpdater();
                 }
                 case 8 -> {
-                    managerAttendance();
+                    switchFile("managers.json");
+                    Attendance(managerId, 4, 5);
                     switchFile("employee.json");
                 }
                 case 9 -> {
-                    Holidays();
+                    Holidays(managerId);
                 }
                 default -> {
                     System.out.println("Wrong Input !");
@@ -256,38 +262,39 @@ public class Manager extends Admin {
 
     }
 
-    private void managerAttendance() {
-        switchFile("managers.json");
+    public void Attendance(String id, int index1, int index2) {
         try {
+            OUTER:
             while (true) {
                 System.out.println("""
-                               >>>>> Attendance >>>>>
-                               1- Time of attendance
-                               2- Time of leaving
-                               3- Exit                         
-                               """);
-
+                                                   >>>>> Attendance >>>>>
+                                                   1- Time of attendance
+                                                   2- Time of leaving
+                                                   3- Exit
+                                                   """);
                 int choice;
-                String timeMessage = "Enter the time ";
                 choice = in.nextInt();
                 String time;
-                if (choice == 1) {
-                    System.out.println(timeMessage);
-                    time = in.next();
-                    updater(4, managerId, time);
-                    break;
-                } else if (choice == 2) {
-                    System.out.println(timeMessage);
-                    time = in.next();
-                    updater(5, managerId, time);
-                    break;
-                } else if (choice == 3) {
-                    break;
-                } else {
-                    System.out.println("Invalid Input");
-
+                String timeMessage = "Enter the time ";
+                switch (choice) {
+                    case 1 -> {
+                        System.out.println(timeMessage);
+                        time = in.next();
+                        updater(index1, id, time);
+                        break OUTER;
+                    }
+                    case 2 -> {
+                        System.out.println(timeMessage);
+                        time = in.next();
+                        updater(index2, id, time);
+                        break OUTER;
+                    }
+                    case 3 -> {
+                        break OUTER;
+                    }
+                    default ->
+                        System.out.println("Invalid Input");
                 }
-
             }
         } catch (InputMismatchException | NullPointerException e) {
             System.out.println("Invalid Input");
@@ -296,12 +303,12 @@ public class Manager extends Admin {
 
     }
 
-    protected void Holidays() {
+    protected void Holidays(String id) {
         switchFile("holidays.json");
-        JsonArray holidays = jsonObject.getJsonArray(managerId);
+        JsonArray holidays = jsonObject.getJsonArray(id);
         if (holidays == null) {
             ArrayList emptyHoliday = new ArrayList();
-            addNewToJson(managerId, emptyHoliday);
+            addNewToJson(id, emptyHoliday);
         }
 
         try {
@@ -320,14 +327,15 @@ public class Manager extends Admin {
                         break OUTER;
                     case 2:
                         try {
-                        createHoliday();
+                            System.out.println(">>>>> My Holidays <<<<<");
+                        createHoliday(id);
                     } catch (IOException e) {
                         System.out.println(e.getClass());
 
                     }
                     break;
                     case 1:
-                        holidaysViewer(managerId);
+                        holidaysViewer(id);
                         break;
                     default:
                         break;
@@ -340,9 +348,8 @@ public class Manager extends Admin {
 
     }
 
-    private void createHoliday() throws IOException {
+    private void createHoliday(String id) throws IOException {
         ArrayList holidayArray = new ArrayList();
-
         System.out.println("Enter Name: ");
         String name = in.next();
         holidayArray.add(name);
@@ -361,7 +368,7 @@ public class Manager extends Admin {
 
         // holiday status , default value is 0, an admin must accept it.
         holidayArray.add(0);
-        super.updaterHoliday(managerId, holidayArray);
+        super.updaterHoliday(id, holidayArray);
     }
 
 }

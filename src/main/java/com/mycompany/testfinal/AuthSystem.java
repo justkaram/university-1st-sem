@@ -43,7 +43,7 @@ public class AuthSystem {
         jsonReader();
     }
 
-    public boolean login() {
+    public boolean loginAdmin() {
         while (true) {
             Scanner in = new Scanner(System.in);
             System.out.println("Enter ID: ");
@@ -251,9 +251,9 @@ public class AuthSystem {
 
     }
 
-    public void holidaysViewer(String managerId) {
-        System.out.println(">>>>> My Holidays <<<<<");
-        JsonArray holidays = jsonObject.getJsonArray(managerId);
+    public void holidaysViewer(String id) {
+        switchFile("holidays.json");
+        JsonArray holidays = jsonObject.getJsonArray(id);
         if (holidays.isEmpty()) {
             System.out.println("You don't have any holidays requests yet !");
             return;

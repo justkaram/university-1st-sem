@@ -175,12 +175,11 @@ public class Manager extends Admin {
 
         System.out.println("Enter Name: ");
         in.nextLine();
-        String managerName = in.next();
+        String managerName = in.nextLine();
         employeeInfo.add(managerName);
 
         System.out.println("Enter Password: ");
-        in.nextLine();
-        String managerPass = in.nextLine();
+        String managerPass = in.next();
         employeeInfo.add(managerPass);
 
         System.out.println("Enter Email: ");
@@ -350,15 +349,16 @@ public class Manager extends Admin {
     private void createHoliday(String id) throws IOException {
         ArrayList holidayArray = new ArrayList();
         System.out.println("Enter Name: ");
-        String name = in.next();
+        in.nextLine();
+        String name = in.nextLine();
         holidayArray.add(name);
 
         System.out.println("Enter Reason: ");
-        String reason = in.next();
+        String reason = in.nextLine();
         holidayArray.add(reason);
 
         System.out.println("Enter Details: ");
-        String details = in.next();
+        String details = in.nextLine();
         holidayArray.add(details);
 
         System.out.println("Enter Date: ");

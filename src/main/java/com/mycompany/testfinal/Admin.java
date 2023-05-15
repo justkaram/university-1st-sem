@@ -207,12 +207,11 @@ public class Admin extends AuthSystem {
         long managerId = in.nextLong();
         System.out.println("Enter Name: ");
         in.nextLine();
-        String managerName = in.next();
+        String managerName = in.nextLine();
         managerInfo.add(managerName);
 
         System.out.println("Enter Password: ");
-        in.nextLine();
-        String managerPass = in.nextLine();
+        String managerPass = in.next();
         managerInfo.add(managerPass);
 
         System.out.println("Enter Email: ");
@@ -220,7 +219,6 @@ public class Admin extends AuthSystem {
         managerInfo.add(managerEmail);
 
         System.out.println("Enter Phone: ");
-        in.nextLine();
         String managerPhone = in.next();
         managerInfo.add(managerPhone);
 

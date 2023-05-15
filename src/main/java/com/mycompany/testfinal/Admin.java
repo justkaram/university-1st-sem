@@ -4,6 +4,7 @@
  */
 package com.mycompany.testfinal;
 
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -27,20 +28,21 @@ public class Admin extends AuthSystem {
         super("managers.json");
     }
 
-    protected void managerCounter() {
+    public void keepTrack() {
         try {
             switchFile("managers.json");
-            System.out.println(jsonObject.keySet().toString());
-            managerCount = jsonObject.keySet().toArray().length;
-            System.out.println(managerCount);
+            managerCount = jsonObject.keySet().size();
+            switchFile("employee.json");
+            employeeCount = jsonObject.keySet().size();
         } catch (NullPointerException e) {
             System.out.println("No Managers Yet :)");
         }
 
     }
 
-    protected void employeeCounter() {
-        Admin.employeeCount += 1;
+    public void counter() {
+        System.out.println("- Manager Count: " + managerCount);
+        System.out.println("- Employee Count: " + employeeCount);
     }
 
     public void LoginAdmin() {
@@ -97,7 +99,9 @@ public class Admin extends AuthSystem {
                     statusUpdater();
                 }
                 case 9 -> {
-                    managerCounter();
+                    System.out.println(">>>>> Get Manager count and Employee count <<<<<");
+                    keepTrack();
+                    counter();
                 }
                 default -> {
                     System.out.println("Wrong Input !");
@@ -198,8 +202,6 @@ public class Admin extends AuthSystem {
         Creats an ArrayList with manager info and adds it to managers.json
          */
 
-        Admin.managerCount += 1;
-
         ArrayList managerInfo = new ArrayList();
         System.out.println("Enter Id: ");
         long managerId = in.nextLong();
@@ -258,13 +260,22 @@ public class Admin extends AuthSystem {
                 }
                 case 1 -> {
                     System.out.println(">>>>> All Holiday Requests <<<<<");
+
                     viewAllHolidays();
                 }
                 case 2 -> {
-                    
+                    System.out.println(">>>>> Accept the holiday <<<<<");
+                    System.out.println("Enter Id: ");
+                    String id = in.next();
+
+                    holidayStatus(id, 1);
                 }
                 case 3 -> {
+                    System.out.println(">>>>> Reject the holiday <<<<<");
+                    System.out.println("Enter Id: ");
+                    String id = in.next();
 
+                    holidayStatus(id, 0);
                 }
                 default -> {
                     System.out.println("Invalid Choice");
@@ -278,17 +289,42 @@ public class Admin extends AuthSystem {
             holidaysViewer(key);
         }
     }
-    
-    private void acceptHoliday(){
-        System.out.println(">>>>> Accept the holiday <<<<<");
-        System.out.println("Enter the id: ");
-        String id = in.next();
 
-        
+    private void holidayStatus(String id, int status) {
+        try {
+            JsonArray all = jsonObject.getJsonArray(id);
+            JsonObject mergedJsonObject;
+            holidaysViewer(id);
+            if (status == 1) {
+                System.out.println("Which holiday you want to accept: ");
+            } else if (status == 2) {
+                System.out.println("Which holiday you want to reject: ");
+            }
+            int choice = in.nextInt();
+            JsonArray toCheck = all.getJsonArray(choice - 1);
+            JsonArrayBuilder checked = Json.createArrayBuilder();
+            for (int i = 0; i < toCheck.size() - 1; i++) {
+                checked.add(toCheck.get(i));
+            }
+            checked.add(Json.createValue(status));
+            JsonArrayBuilder allUpdate = Json.createArrayBuilder(all);
+            allUpdate.set(choice - 1, checked);
+            mergedJsonObject = Json.createObjectBuilder(jsonObject)
+                    .add(id, allUpdate)
+                    .build();
+
+            jsonWriter(mergedJsonObject);
+
+        } catch (NullPointerException e) {
+            System.out.println("Id doesn't exist !");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid Choice");
+        }
+
     }
 
     protected void updater(int index, String id, String value) {
-        JsonObject mergedJsonObject = null;
+        JsonObject mergedJsonObject;
         JsonArrayBuilder newJsonArray = Json.createArrayBuilder();
         JsonArray array = jsonObject.getJsonArray(id);
         for (int i = 0; i < array.size(); i++) {

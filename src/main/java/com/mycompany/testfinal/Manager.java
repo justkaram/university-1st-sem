@@ -207,7 +207,7 @@ public class Manager extends Admin {
             System.out.println("employee Status must be either 0 or 1 !");
             return;
         }
-
+        
         addNewToJson(String.valueOf(employeeId), employeeInfo);
         System.out.println("The employee has been added successfully");
     }
@@ -323,22 +323,21 @@ public class Manager extends Admin {
                 int choice;
                 choice = in.nextInt();
                 switch (choice) {
-                    case 3:
+                    case 3 -> {
                         break OUTER;
-                    case 2:
+                    }
+                    case 2 -> {
                         try {
                             System.out.println(">>>>> My Holidays <<<<<");
-                        createHoliday(id);
-                    } catch (IOException e) {
-                        System.out.println(e.getClass());
-
+                            createHoliday(id);
+                        } catch (IOException e) {
+                            System.out.println(e.getClass());
+                            
+                        }
                     }
-                    break;
-                    case 1:
-                        holidaysViewer(id);
-                        break;
-                    default:
-                        break;
+                    case 1 -> holidaysViewer(id);
+                    default -> {
+                    }
                 }
             }
 

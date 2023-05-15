@@ -142,8 +142,8 @@ public class AuthSystem {
         }
     }
 
-    protected void updaterHoliday(String id, ArrayList newList) {
-        JsonObject mergedJsonObject = null;
+    public void updaterHoliday(String id, ArrayList newList) {
+        JsonObject mergedJsonObject;
         JsonArrayBuilder allJsonArrays = Json.createArrayBuilder();
         JsonArray arrayAll = jsonObject.getJsonArray(id);
         for (int i = 0; i < arrayAll.size(); i++) {
@@ -164,6 +164,8 @@ public class AuthSystem {
         jsonWriter(mergedJsonObject);
 
     }
+
+
 
     public JsonArray jsonArrayCreator(ArrayList someList) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
@@ -206,12 +208,16 @@ public class AuthSystem {
                     System.out.println(user + " is Not Found !!");
                     return;
                 }
-                JsonObject mergedObj = null;
+                
+                
+                JsonObject mergedObj;
                 JsonArray array = jsonObject.getJsonArray(id);
                 if (array == null) {
                     System.out.println("array is empty");
 
                 }
+                
+                
                 int status = 0;
                 try {
                     status = ((JsonNumber) array.get(array.size() - 1)).intValue();
@@ -226,6 +232,7 @@ public class AuthSystem {
                     System.out.println("Account is already deactivated.");
                     return;
                 }
+                
                 JsonArrayBuilder newArray = Json.createArrayBuilder();
                 for (int i = 0; i < array.size(); i++) {
                     if (!(i == array.size() - 1)) {
@@ -255,7 +262,7 @@ public class AuthSystem {
         switchFile("holidays.json");
         JsonArray holidays = jsonObject.getJsonArray(id);
         if (holidays.isEmpty()) {
-            System.out.println("You don't have any holidays requests yet !");
+            System.out.println("Id doesn't any holidays requests yet !");
             return;
         }
         for (Object o : holidays) {

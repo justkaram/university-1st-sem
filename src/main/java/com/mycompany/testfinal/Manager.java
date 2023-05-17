@@ -4,7 +4,6 @@
  */
 package com.mycompany.testfinal;
 
-import static com.mycompany.testfinal.AuthSystem.in;
 import static com.mycompany.testfinal.AuthSystem.jsonObject;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,13 +24,12 @@ public class Manager extends Admin {
     private String empId;
 
     public Manager() {
-        if (login().equals("")) {
+        if (loginManager().equals("")) {
             System.out.println("User id is not found or password is wrong.");
         } else {
             if (!checkStatus) {
                 System.out.println("Your Account is disabled !!");
             } else {
-                switchFile("employee.json");
                 managerInterface();
             }
         }
@@ -41,7 +39,8 @@ public class Manager extends Admin {
         switchFile(fromChild);
     }
 
-    public String login() {
+    public String loginManager() {
+        Scanner in = new Scanner(System.in);
         System.out.println("Enter ID: ");
         String user = in.next();
         JsonArray array = jsonObject.getJsonArray(user);
@@ -68,6 +67,7 @@ public class Manager extends Admin {
     }
 
     public String fastCheckId() {
+        Scanner in = new Scanner(System.in);
         System.out.println("Enter Id");
         String id = in.next();
         String idCheck = super.fastCheckId(id);
@@ -98,6 +98,7 @@ public class Manager extends Admin {
                                                                   10- Exit
                                                                   """);
 
+            Scanner in = new Scanner(System.in);
             int userChoice = 0;
             try {
                 userChoice = input.nextInt();
@@ -160,7 +161,6 @@ public class Manager extends Admin {
                 }
             }
 
-            jsonReader();
         }
     }
 
@@ -168,6 +168,8 @@ public class Manager extends Admin {
         /*
         Creats an ArrayList with manager info and adds it to managers.json
          */
+        Scanner in = new Scanner(System.in);
+
         ArrayList employeeInfo = new ArrayList();
         System.out.println("Enter Id: ");
         long employeeId = in.nextLong();
@@ -206,7 +208,7 @@ public class Manager extends Admin {
             System.out.println("employee Status must be either 0 or 1 !");
             return;
         }
-        
+
         addNewToJson(String.valueOf(employeeId), employeeInfo);
         System.out.println("The employee has been added successfully");
     }
@@ -271,6 +273,8 @@ public class Manager extends Admin {
                                                    2- Time of leaving
                                                    3- Exit
                                                    """);
+                Scanner in = new Scanner(System.in);
+
                 int choice;
                 choice = in.nextInt();
                 String time;
@@ -319,6 +323,7 @@ public class Manager extends Admin {
                                                    2- Create Holiday
                                                    3- Exit
                                                                             """);
+                Scanner in = new Scanner(System.in);
                 int choice;
                 choice = in.nextInt();
                 switch (choice) {
@@ -327,14 +332,21 @@ public class Manager extends Admin {
                     }
                     case 2 -> {
                         try {
-                            System.out.println(">>>>> My Holidays <<<<<");
+                            System.out.println(">>>>> Create Holidays <<<<<");
                             createHoliday(id);
                         } catch (IOException e) {
                             System.out.println(e.getClass());
-                            
+
                         }
                     }
-                    case 1 -> holidaysViewer(id);
+                    case 1 -> {
+                        System.out.println(">>>>> My Holidays <<<<<");
+                        if (holidaysViewer(id) == null) {
+                            System.out.println("Id doesn't any holidays requests yet !");
+                        } else {
+                            System.out.println(holidaysViewer(id));
+                        }
+                    }
                     default -> {
                     }
                 }
@@ -347,6 +359,7 @@ public class Manager extends Admin {
     }
 
     private void createHoliday(String id) throws IOException {
+        Scanner in = new Scanner(System.in);
         ArrayList holidayArray = new ArrayList();
         System.out.println("Enter Name: ");
         in.nextLine();

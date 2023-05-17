@@ -4,12 +4,9 @@
  */
 package com.mycompany.testfinal;
 
-import static com.mycompany.testfinal.AuthSystem.in;
 import static com.mycompany.testfinal.AuthSystem.jsonObject;
+import java.util.ArrayList;
 import java.util.Scanner;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonString;
 
 /**
  *
@@ -17,10 +14,7 @@ import javax.json.JsonString;
  */
 public class Employee extends Manager {
 
-    private Scanner input = new Scanner(System.in);
-    private boolean empStatus = true;
     private String empId;
-    private String empName;
 
     public Employee() {
         super("employee.json");
@@ -29,14 +23,16 @@ public class Employee extends Manager {
     }
 
     private void logEmp() {
-        String logResult = super.login();
-        if (logResult.equals("")) {
-            System.out.println("Either id is not found or password is wrong. ");
-        }else if (logResult.equals("disabled")){
-            System.out.println("Account is Disabled.");
-        }else{
-            empId = logResult;
-            empInterface();
+        String logResult = super.loginManager();
+        switch (logResult) {
+            case "" ->
+                System.out.println("Either id is not found or password is wrong. ");
+            case "disabled" ->
+                System.out.println("Account is Disabled.");
+            default -> {
+                empId = logResult;
+                empInterface();
+            }
         }
 
     }
@@ -53,9 +49,9 @@ public class Employee extends Manager {
                                                                   3- Holiday
                                                                   4- Exit
                                                                   """);
-
+            Scanner in = new Scanner(System.in);
             int userChoice;
-            userChoice = input.nextInt();
+            userChoice = in.nextInt();
             switch (userChoice) {
                 case 4 -> {
                     break OUTER;
@@ -64,19 +60,30 @@ public class Employee extends Manager {
                     updateEmpPass();
                 }
                 case 2 -> {
-                    Attendance(empId,5,6);
+                    Attendance(empId, 5, 6);
                 }
                 case 3 -> {
-                    Holidays(empId);
+                    for (String key : jsonObject.keySet()) {
+                        if (key.equals(empId)) {
+                            ArrayList<StringBuilder> list = holidaysViewer(key);
+                            if (!(list == null)) {
+                                for (int i = 0; i < list.size(); i++) {
+                                    System.out.println(list.get(i));
+                                }
+                            }
+                        }
+
+                    }
                 }
             }
         }
     }
 
     private void updateEmpPass() {
+        Scanner in = new Scanner(System.in);
         System.out.println(">>>>> Change Password <<<<<");
         System.out.println("Enter New Password: ");
-        String newPass = input.next();
+        String newPass = in.next();
         super.updater(1, empId, newPass);
         System.out.println("Password has been updated successfully");
     }

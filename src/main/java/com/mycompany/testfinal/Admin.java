@@ -4,7 +4,6 @@
  */
 package com.mycompany.testfinal;
 
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -26,6 +25,7 @@ public class Admin extends AuthSystem {
 
     public Admin() {
         super("managers.json");
+
     }
 
     public void keepTrack() {
@@ -35,7 +35,7 @@ public class Admin extends AuthSystem {
             switchFile("employee.json");
             employeeCount = jsonObject.keySet().size();
         } catch (NullPointerException e) {
-            System.out.println("No Managers Yet :)");
+            System.out.println("No Data Yet :)");
         }
 
     }
@@ -45,18 +45,19 @@ public class Admin extends AuthSystem {
         System.out.println("- Employee Count: " + employeeCount);
     }
 
-    public void LoginAdmin() {
-        if (loginAdmin()) {
+    public void loginAdmin() {
+        if (login()) {
             AdminInterFace();
         }
 
     }
 
     private void AdminInterFace() {
-        switchFile("managers.json");
+
         System.out.println(">>>>> Welcome " + super.getUserName() + " >>>>>");
         OUTER:
         while (true) {
+            switchFile("managers.json");
             System.out.println("""
                                            ----------------------------------------------------------------
                                                                   1- Add Manager
@@ -108,12 +109,12 @@ public class Admin extends AuthSystem {
                 }
             }
 
-            jsonReader();
         }
     }
 
     private boolean managerOperations(int choice) {
         try {
+            Scanner in = new Scanner(System.in);
             System.out.println("Enter Manager Id: ");
             String managerId = fastCheckId(in.next());
             if (managerId.equals("")) {
@@ -201,41 +202,46 @@ public class Admin extends AuthSystem {
         /*
         Creats an ArrayList with manager info and adds it to managers.json
          */
+        try {
+            Scanner in = new Scanner(System.in);
+            ArrayList managerInfo = new ArrayList();
+            System.out.println("Enter Id: ");
+            long managerId = in.nextLong();
+            System.out.println("Enter Name: ");
+            in.nextLine();
+            String managerName = in.nextLine();
+            managerInfo.add(managerName);
 
-        ArrayList managerInfo = new ArrayList();
-        System.out.println("Enter Id: ");
-        long managerId = in.nextLong();
-        System.out.println("Enter Name: ");
-        in.nextLine();
-        String managerName = in.nextLine();
-        managerInfo.add(managerName);
+            System.out.println("Enter Password: ");
+            String managerPass = in.next();
+            managerInfo.add(managerPass);
 
-        System.out.println("Enter Password: ");
-        String managerPass = in.next();
-        managerInfo.add(managerPass);
+            System.out.println("Enter Email: ");
+            String managerEmail = in.next();
+            managerInfo.add(managerEmail);
 
-        System.out.println("Enter Email: ");
-        String managerEmail = in.next();
-        managerInfo.add(managerEmail);
+            System.out.println("Enter Phone: ");
+            String managerPhone = in.next();
+            managerInfo.add(managerPhone);
 
-        System.out.println("Enter Phone: ");
-        String managerPhone = in.next();
-        managerInfo.add(managerPhone);
+            managerInfo.add("Not Signed yet");
+            managerInfo.add("Not Signed yet");
 
-        managerInfo.add("Not Signed yet");
-        managerInfo.add("Not Signed yet");
+            System.out.println("Enter Status: ");
+            int managerStatus = in.nextInt();
+            if (managerStatus == 0 || managerStatus == 1) {
+                managerInfo.add(managerStatus);
+            } else {
+                System.out.println("Manager Status must be either 0 or 1 !");
+                return;
+            }
 
-        System.out.println("Enter Status: ");
-        int managerStatus = in.nextInt();
-        if (managerStatus == 0 || managerStatus == 1) {
-            managerInfo.add(managerStatus);
-        } else {
-            System.out.println("Manager Status must be either 0 or 1 !");
-            return;
+            addNewToJson(String.valueOf(managerId), managerInfo);
+            System.out.println("The manager has been added successfully");
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid Input ");
         }
 
-        addNewToJson(String.valueOf(managerId), managerInfo);
-        System.out.println("The manager has been added successfully");
     }
 
     private void holidays() {
@@ -250,6 +256,7 @@ public class Admin extends AuthSystem {
                                                                   4- Exit
                                                                   """);
 
+            Scanner in = new Scanner(System.in);
             int userChoice;
             userChoice = in.nextInt();
             switch (userChoice) {
@@ -258,21 +265,18 @@ public class Admin extends AuthSystem {
                 }
                 case 1 -> {
                     System.out.println(">>>>> All Holiday Requests <<<<<");
-
                     viewAllHolidays();
                 }
                 case 2 -> {
                     System.out.println(">>>>> Accept the holiday <<<<<");
                     System.out.println("Enter Id: ");
                     String id = in.next();
-
                     holidayStatus(id, 1);
                 }
                 case 3 -> {
                     System.out.println(">>>>> Reject the holiday <<<<<");
                     System.out.println("Enter Id: ");
                     String id = in.next();
-
                     holidayStatus(id, 0);
                 }
                 default -> {
@@ -284,15 +288,29 @@ public class Admin extends AuthSystem {
 
     private void viewAllHolidays() {
         for (String key : jsonObject.keySet()) {
-            holidaysViewer(key);
+            ArrayList<StringBuilder> list = holidaysViewer(key);
+            if (!(list == null)) {
+                for (int i = 0; i < list.size(); i++) {
+                    System.out.println(list.get(i));
+                }
+            }
+
         }
     }
 
     private void holidayStatus(String id, int status) {
         try {
+            Scanner in = new Scanner(System.in);
+
             JsonArray all = jsonObject.getJsonArray(id);
             JsonObject mergedJsonObject;
-            holidaysViewer(id);
+            ArrayList<StringBuilder> list = holidaysViewer(id);
+            for (int i = 0; i < list.size(); i++) {
+                System.out.println(list.get(i));
+            }
+            for (int i = 0; i < 10; i++) {
+
+            }
             if (status == 1) {
                 System.out.println("Which holiday you want to accept: ");
             } else if (status == 2) {
@@ -312,6 +330,12 @@ public class Admin extends AuthSystem {
                     .build();
 
             jsonWriter(mergedJsonObject);
+
+            if (status == 1) {
+                System.out.println("Holiday Has Been Accepted :)");
+            } else {
+                System.out.println("Holiday Has Been Rejected :)");
+            }
 
         } catch (NullPointerException e) {
             System.out.println("Id doesn't exist !");

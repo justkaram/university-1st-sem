@@ -33,7 +33,6 @@ public class AuthSystem {
 
     private final String userName = "120220562";
     private final String passWord = "123456";
-    public static Scanner in = new Scanner(System.in);
     public static String jsonData = null;
     public static JsonObject jsonObject = null;
     protected static String filePath;
@@ -43,7 +42,7 @@ public class AuthSystem {
         jsonReader();
     }
 
-    public boolean loginAdmin() {
+    public boolean login() {
         while (true) {
             Scanner in = new Scanner(System.in);
             System.out.println("Enter ID: ");
@@ -165,8 +164,6 @@ public class AuthSystem {
 
     }
 
-
-
     public JsonArray jsonArrayCreator(ArrayList someList) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (Object o : someList) {
@@ -182,6 +179,8 @@ public class AuthSystem {
 
     protected void statusUpdater() {
         while (true) {
+            Scanner in = new Scanner(System.in);
+
             System.out.println("""
             >>>>> Activate & Deactivate >>>>>
             -1 Activate
@@ -208,16 +207,14 @@ public class AuthSystem {
                     System.out.println(user + " is Not Found !!");
                     return;
                 }
-                
-                
+
                 JsonObject mergedObj;
                 JsonArray array = jsonObject.getJsonArray(id);
                 if (array == null) {
                     System.out.println("array is empty");
 
                 }
-                
-                
+
                 int status = 0;
                 try {
                     status = ((JsonNumber) array.get(array.size() - 1)).intValue();
@@ -232,7 +229,7 @@ public class AuthSystem {
                     System.out.println("Account is already deactivated.");
                     return;
                 }
-                
+
                 JsonArrayBuilder newArray = Json.createArrayBuilder();
                 for (int i = 0; i < array.size(); i++) {
                     if (!(i == array.size() - 1)) {
@@ -258,14 +255,17 @@ public class AuthSystem {
 
     }
 
-    public void holidaysViewer(String id) {
+    public ArrayList holidaysViewer(String id) {
         switchFile("holidays.json");
         JsonArray holidays = jsonObject.getJsonArray(id);
         if (holidays.isEmpty()) {
-            System.out.println("Id doesn't any holidays requests yet !");
-            return;
+            return null;
         }
+        ArrayList<StringBuilder> holidaysForId = new ArrayList<>();
+        int counter = 0;
         for (Object o : holidays) {
+            StringBuilder sb = new StringBuilder();
+            counter += 1;
             JsonArray singleHoliday = (JsonArray) o;
             String name = ((JsonString) singleHoliday.get(0)).getString();
             String reason = ((JsonString) singleHoliday.get(1)).getString();
@@ -273,8 +273,10 @@ public class AuthSystem {
             String date = ((JsonString) singleHoliday.get(3)).getString();
             int checked = ((JsonNumber) singleHoliday.get(4)).intValue();
             String sep = " || ";
-            StringBuilder sb = new StringBuilder();
-            sb.append("Name: ")
+
+            sb.append(counter)
+                    .append(sep)
+                    .append("Name: ")
                     .append(name)
                     .append(sep)
                     .append("Reason: ")
@@ -288,8 +290,9 @@ public class AuthSystem {
                     .append(sep)
                     .append("Checked: ")
                     .append(checked);
-            System.out.println(sb);
+            holidaysForId.add(sb);
         }
+        return holidaysForId;
 
     }
 

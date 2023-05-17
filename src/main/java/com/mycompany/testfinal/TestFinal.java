@@ -4,6 +4,7 @@
  */
 package com.mycompany.testfinal;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -13,32 +14,14 @@ import java.util.Scanner;
 public class TestFinal {
 
     public static void main(String[] args) {
-        OUTER:
-        while (true) {
-            int loginChoice = Login();
-            switch (loginChoice) { 
-                case 5 -> {
-                    break OUTER;
-                }
-                case 1 -> {
-                    Admin admin = new Admin();
-                    admin.LoginAdmin();
-                }
-                case 2 -> {
-                    Manager manager = new Manager();
-                }
-                case 3 ->{
-                    Employee emp = new Employee();
-                }
-                default -> {
-                }
-            }
-        }
+        go();
     }
 
-    public static int Login() {
+    public static void go() {
         Scanner in = new Scanner(System.in);
-        System.out.println("""
+        OUTER:
+        while (true) {
+            System.out.println("""
                            >>>>> Login Screen <<<<<
                            -1 Login as Admin
                            -2 Login as Manager
@@ -46,8 +29,33 @@ public class TestFinal {
                            -4 About System
                            -5 Exit
                            """);
-        int choice = in.nextInt();
-        return choice;
+            try {
+                int choice = in.nextInt();
+                switch (choice) {
+                    case 5 -> {
+                        break OUTER;
+                    }
+                    case 1 -> {
+                        Admin admin = new Admin();
+                        admin.loginAdmin();
+                    }
+                    case 2 -> {
+                        Manager manager = new Manager();
+                    }
+                    case 3 -> {
+                        Employee employee = new Employee();
+                    }
+                    default -> {
+                        System.out.println("Invalid Choice");
+                    }
+                }
+            }catch (InputMismatchException e){
+                System.out.println("Input Must be an integer");
+                go();
+            }
+
+        }
 
     }
+
 }

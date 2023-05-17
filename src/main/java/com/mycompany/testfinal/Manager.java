@@ -127,6 +127,8 @@ public class Manager extends Admin {
                     empId = fastCheckId();
                     if (!(empId.equals(""))) {
                         deleteFromJson(empId);
+                        switchFile("holidays.json");
+                        deleteFromJson(empId);
                         System.out.println("Employee has been deleted.");
                     }
                 }
@@ -307,6 +309,9 @@ public class Manager extends Admin {
     }
 
     protected void Holidays(String id) {
+        /*
+        Manage Holidays
+        */
         switchFile("holidays.json");
         JsonArray holidays = jsonObject.getJsonArray(id);
         if (holidays == null) {
@@ -359,6 +364,9 @@ public class Manager extends Admin {
     }
 
     private void createHoliday(String id) throws IOException {
+        /*
+        Creates Holiday Request 
+        */
         Scanner in = new Scanner(System.in);
         ArrayList holidayArray = new ArrayList();
         System.out.println("Enter Name: ");
@@ -367,10 +375,12 @@ public class Manager extends Admin {
         holidayArray.add(name);
 
         System.out.println("Enter Reason: ");
+        in.nextLine();
         String reason = in.nextLine();
         holidayArray.add(reason);
 
         System.out.println("Enter Details: ");
+        in.nextLine();
         String details = in.nextLine();
         holidayArray.add(details);
 

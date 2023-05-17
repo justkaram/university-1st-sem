@@ -126,6 +126,8 @@ public class Admin extends AuthSystem {
                 System.out.println("Password Updated Successfully");
             } else if (choice == 3) {
                 deleteFromJson(managerId);
+                switchFile("holidays.json");
+                deleteFromJson(managerId);
                 System.out.println("Manager has been deleted successfully");
             } else if (choice == 4) {
                 searchUser(managerId);
@@ -245,45 +247,51 @@ public class Admin extends AuthSystem {
     }
 
     private void holidays() {
-        System.out.println(">>>>> Welcome Requests >>>>>");
-        OUTER:
-        while (true) {
-            switchFile("holidays.json");
-            System.out.println("""
+        try {
+            System.out.println(">>>>> Welcome Requests >>>>>");
+            OUTER:
+            while (true) {
+                switchFile("holidays.json");
+                System.out.println("""
                                                                   1- View Holiday Requests
                                                                   2- Accept the holiday
                                                                   3- Reject the holiday
                                                                   4- Exit
                                                                   """);
 
-            Scanner in = new Scanner(System.in);
-            int userChoice;
-            userChoice = in.nextInt();
-            switch (userChoice) {
-                case 4 -> {
-                    break OUTER;
-                }
-                case 1 -> {
-                    System.out.println(">>>>> All Holiday Requests <<<<<");
-                    viewAllHolidays();
-                }
-                case 2 -> {
-                    System.out.println(">>>>> Accept the holiday <<<<<");
-                    System.out.println("Enter Id: ");
-                    String id = in.next();
-                    holidayStatus(id, 1);
-                }
-                case 3 -> {
-                    System.out.println(">>>>> Reject the holiday <<<<<");
-                    System.out.println("Enter Id: ");
-                    String id = in.next();
-                    holidayStatus(id, 0);
-                }
-                default -> {
-                    System.out.println("Invalid Choice");
+                Scanner in = new Scanner(System.in);
+                int userChoice;
+                userChoice = in.nextInt();
+
+                switch (userChoice) {
+                    case 4 -> {
+                        break OUTER;
+                    }
+                    case 1 -> {
+                        System.out.println(">>>>> All Holiday Requests <<<<<");
+                        viewAllHolidays();
+                    }
+                    case 2 -> {
+                        System.out.println(">>>>> Accept the holiday <<<<<");
+                        System.out.println("Enter Id: ");
+                        String id = in.next();
+                        holidayStatus(id, 1);
+                    }
+                    case 3 -> {
+                        System.out.println(">>>>> Reject the holiday <<<<<");
+                        System.out.println("Enter Id: ");
+                        String id = in.next();
+                        holidayStatus(id, 0);
+                    }
+                    default -> {
+                        System.out.println("Invalid Choice");
+                    }
                 }
             }
+        } catch(InputMismatchException e){
+            System.out.println("Invalid Choice");
         }
+
     }
 
     private void viewAllHolidays() {

@@ -262,7 +262,7 @@ public class Admin extends AuthSystem {
                 Scanner in = new Scanner(System.in);
                 int userChoice;
                 userChoice = in.nextInt();
-
+                switchFile("holidays.json");
                 switch (userChoice) {
                     case 4 -> {
                         break OUTER;
@@ -275,6 +275,7 @@ public class Admin extends AuthSystem {
                         System.out.println(">>>>> Accept the holiday <<<<<");
                         System.out.println("Enter Id: ");
                         String id = in.next();
+                        
                         holidayStatus(id, 1);
                     }
                     case 3 -> {
@@ -295,6 +296,9 @@ public class Admin extends AuthSystem {
     }
 
     private void viewAllHolidays() {
+        if (jsonObject.keySet().isEmpty()){
+            System.out.println("No holiday requests yet.");
+        }
         for (String key : jsonObject.keySet()) {
             ArrayList<StringBuilder> list = holidaysViewer(key);
             if (!(list == null)) {
@@ -311,6 +315,10 @@ public class Admin extends AuthSystem {
             Scanner in = new Scanner(System.in);
 
             JsonArray all = jsonObject.getJsonArray(id);
+            if ((all == null) || (all.isEmpty())){
+                System.out.println("Id doesn't have any holiday requests.");
+                return;
+            }
             JsonObject mergedJsonObject;
             ArrayList<StringBuilder> list = holidaysViewer(id);
             for (int i = 0; i < list.size(); i++) {

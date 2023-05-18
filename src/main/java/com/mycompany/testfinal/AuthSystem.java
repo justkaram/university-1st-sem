@@ -4,13 +4,16 @@
  */
 package com.mycompany.testfinal;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 import javax.json.Json;
@@ -69,13 +72,19 @@ public class AuthSystem {
         try {
             jsonData = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {
-            System.out.println(e.getClass());
-            System.out.println("Error occurred while trying to read managers.json");
+            File file = new File(filePath);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException g){
+                    System.out.println(g.getClass());
+                }
+            }
         }
 
         try {
             jsonObject = Json.createReader(new StringReader(jsonData)).readObject();
-        } catch (JsonParsingException e) {
+        } catch (JsonParsingException | NullPointerException e) {
             jsonObject = Json.createObjectBuilder().build();
         }
 
@@ -187,8 +196,13 @@ public class AuthSystem {
             -2 Deactivate
             -3 Exit
                                """);
+            int choice = 0;
+            try {
+                choice = in.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Input Must be an integer !");
+            }
 
-            int choice = in.nextInt();
             if (choice == 3) {
                 break;
             } else if (choice == 1 || choice == 2) {
@@ -211,8 +225,7 @@ public class AuthSystem {
                 JsonObject mergedObj;
                 JsonArray array = jsonObject.getJsonArray(id);
                 if (array == null) {
-                    System.out.println("array is empty");
-
+                    return;
                 }
 
                 int status = 0;
@@ -249,7 +262,6 @@ public class AuthSystem {
 
             } else {
                 System.out.println("Wrong Input !!");
-                statusUpdater();
             }
         }
 

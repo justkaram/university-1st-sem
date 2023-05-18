@@ -355,7 +355,6 @@ public class Manager extends Admin {
                     case 1 -> {
                         System.out.println(">>>>> My Holidays <<<<<");
                         ArrayList<StringBuilder> list = holidaysViewer(id);
-                        System.out.println(list);
                         if ((list == null) || list.isEmpty()) {
                             System.out.println("Id doesn't any holidays requests yet !");
                         } else {

@@ -6,6 +6,7 @@ package com.mycompany.testfinal;
 
 import static com.mycompany.testfinal.AuthSystem.jsonObject;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -50,8 +51,13 @@ public class Employee extends Manager {
                                                                   4- Exit
                                                                   """);
             Scanner in = new Scanner(System.in);
-            int userChoice;
-            userChoice = in.nextInt();
+            int userChoice = 0;
+            try {
+                userChoice = in.nextInt();
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid Input");
+            }
             switch (userChoice) {
                 case 4 -> {
                     break OUTER;
@@ -63,17 +69,7 @@ public class Employee extends Manager {
                     Attendance(empId, 5, 6);
                 }
                 case 3 -> {
-                    for (String key : jsonObject.keySet()) {
-                        if (key.equals(empId)) {
-                            ArrayList<StringBuilder> list = holidaysViewer(key);
-                            if (!(list == null)) {
-                                for (int i = 0; i < list.size(); i++) {
-                                    System.out.println(list.get(i));
-                                }
-                            }
-                        }
-
-                    }
+                    Holidays(empId);
                 }
             }
         }

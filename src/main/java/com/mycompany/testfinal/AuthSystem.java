@@ -258,7 +258,7 @@ public class AuthSystem {
     public ArrayList holidaysViewer(String id) {
         switchFile("holidays.json");
         JsonArray holidays = jsonObject.getJsonArray(id);
-        if (holidays.isEmpty()) {
+        if (holidays == null) {
             return null;
         }
         ArrayList<StringBuilder> holidaysForId = new ArrayList<>();

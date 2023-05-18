@@ -18,17 +18,18 @@ public class TestFinal {
     }
 
     public static void go() {
-        Scanner in = new Scanner(System.in);
         OUTER:
         while (true) {
+            Scanner in = new Scanner(System.in);
+
             System.out.println("""
-                           >>>>> Login Screen <<<<<
-                           -1 Login as Admin
-                           -2 Login as Manager
-                           -3 Login as Employee
-                           -4 About System
-                           -5 Exit
-                           """);
+                                           >>>>> Login Screen <<<<<
+                                           -1 Login as Admin
+                                           -2 Login as Manager
+                                           -3 Login as Employee
+                                           -4 About System
+                                           -5 Exit
+                                           """);
             try {
                 int choice = in.nextInt();
                 switch (choice) {
@@ -45,15 +46,12 @@ public class TestFinal {
                     case 3 -> {
                         Employee employee = new Employee();
                     }
-                    default -> {
+                    default ->
                         System.out.println("Invalid Choice");
-                    }
                 }
-            }catch (InputMismatchException e){
+            } catch (InputMismatchException e) {
                 System.out.println("Input Must be an integer");
-                go();
             }
-
         }
 
     }

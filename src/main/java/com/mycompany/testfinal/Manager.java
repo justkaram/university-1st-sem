@@ -79,10 +79,11 @@ public class Manager extends Admin {
 
     private void managerInterface() {
 
-        Scanner input = new Scanner(System.in);
         System.out.println(">>>>> Welcome " + managerId + " >>>>>");
         OUTER:
         while (true) {
+            Scanner input = new Scanner(System.in);
+
             switchFile("employee.json");
             System.out.println("""
                                            ----------------------------------------------------------------
@@ -104,7 +105,6 @@ public class Manager extends Admin {
                 userChoice = input.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Input must be an Integer !!! ");
-                managerInterface();
 
             }
             switch (userChoice) {
@@ -170,49 +170,55 @@ public class Manager extends Admin {
         /*
         Creats an ArrayList with manager info and adds it to managers.json
          */
-        Scanner in = new Scanner(System.in);
 
-        ArrayList employeeInfo = new ArrayList();
-        System.out.println("Enter Id: ");
-        long employeeId = in.nextLong();
-        employeeInfo.add(employeeId);
+        try {
+            Scanner in = new Scanner(System.in);
 
-        System.out.println("Enter Name: ");
-        in.nextLine();
-        String managerName = in.nextLine();
-        employeeInfo.add(managerName);
+            ArrayList employeeInfo = new ArrayList();
+            System.out.println("Enter Id: ");
+            long employeeId = in.nextLong();
+            employeeInfo.add(employeeId);
 
-        System.out.println("Enter Password: ");
-        String managerPass = in.next();
-        employeeInfo.add(managerPass);
+            System.out.println("Enter Name: ");
+            in.nextLine();
+            String managerName = in.nextLine();
+            employeeInfo.add(managerName);
 
-        System.out.println("Enter Email: ");
-        String managerEmail = in.next();
-        employeeInfo.add(managerEmail);
+            System.out.println("Enter Password: ");
+            String managerPass = in.next();
+            employeeInfo.add(managerPass);
 
-        System.out.println("Enter Phone: ");
-        in.nextLine();
-        String managerPhone = in.next();
-        employeeInfo.add(managerPhone);
+            System.out.println("Enter Email: ");
+            String managerEmail = in.next();
+            employeeInfo.add(managerEmail);
 
-        System.out.println("Type of employee (1) <Full-Time> or (2) <Part-Time>");
-        int employeeType = in.nextInt();
-        employeeInfo.add(employeeType);
+            System.out.println("Enter Phone: ");
+            in.nextLine();
+            String managerPhone = in.next();
+            employeeInfo.add(managerPhone);
 
-        employeeInfo.add("Not Signed yet");
-        employeeInfo.add("Not Signed yet");
+            System.out.println("Type of employee (1) <Full-Time> or (2) <Part-Time>");
+            int employeeType = in.nextInt();
+            employeeInfo.add(employeeType);
 
-        System.out.println("Enter Status: ");
-        int empStatus = in.nextInt();
-        if (empStatus == 0 || empStatus == 1) {
-            employeeInfo.add(empStatus);
-        } else {
-            System.out.println("employee Status must be either 0 or 1 !");
-            return;
+            employeeInfo.add("Not Signed yet");
+            employeeInfo.add("Not Signed yet");
+
+            System.out.println("Enter Status: ");
+            int empStatus = in.nextInt();
+            if (empStatus == 0 || empStatus == 1) {
+                employeeInfo.add(empStatus);
+            } else {
+                System.out.println("employee Status must be either 0 or 1 !");
+                return;
+            }
+
+            addNewToJson(String.valueOf(employeeId), employeeInfo);
+            System.out.println("The employee has been added successfully");
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input !");
         }
 
-        addNewToJson(String.valueOf(employeeId), employeeInfo);
-        System.out.println("The employee has been added successfully");
     }
 
     private void empReport(String empId) {
@@ -286,12 +292,15 @@ public class Manager extends Admin {
                         System.out.println(timeMessage);
                         time = in.next();
                         updater(index1, id, time);
+                        System.out.println("Time of attendance has been updated. ");
                         break OUTER;
                     }
                     case 2 -> {
                         System.out.println(timeMessage);
                         time = in.next();
                         updater(index2, id, time);
+                        System.out.println("Time of leaving has been updated. ");
+
                         break OUTER;
                     }
                     case 3 -> {
@@ -311,7 +320,7 @@ public class Manager extends Admin {
     protected void Holidays(String id) {
         /*
         Manage Holidays
-        */
+         */
         switchFile("holidays.json");
         JsonArray holidays = jsonObject.getJsonArray(id);
         if (holidays == null) {
@@ -341,24 +350,28 @@ public class Manager extends Admin {
                             createHoliday(id);
                         } catch (IOException e) {
                             System.out.println(e.getClass());
-
                         }
                     }
                     case 1 -> {
                         System.out.println(">>>>> My Holidays <<<<<");
-                        if (holidaysViewer(id) == null) {
+                        ArrayList<StringBuilder> list = holidaysViewer(id);
+                        System.out.println(list);
+                        if ((list == null) || list.isEmpty()) {
                             System.out.println("Id doesn't any holidays requests yet !");
                         } else {
-                            System.out.println(holidaysViewer(id));
+                            for (int i = 0; i < list.size(); i++) {
+                                System.out.println(list.get(i));
+                            }
                         }
                     }
                     default -> {
+                        System.out.println("Invalid Input");
                     }
                 }
             }
 
         } catch (NullPointerException | InputMismatchException e) {
-            System.out.println(e.getClass());
+            System.out.println("Invalid Input !!");
         }
 
     }
@@ -366,21 +379,18 @@ public class Manager extends Admin {
     private void createHoliday(String id) throws IOException {
         /*
         Creates Holiday Request 
-        */
+         */
         Scanner in = new Scanner(System.in);
         ArrayList holidayArray = new ArrayList();
         System.out.println("Enter Name: ");
-        in.nextLine();
         String name = in.nextLine();
         holidayArray.add(name);
 
         System.out.println("Enter Reason: ");
-        in.nextLine();
         String reason = in.nextLine();
         holidayArray.add(reason);
 
         System.out.println("Enter Details: ");
-        in.nextLine();
         String details = in.nextLine();
         holidayArray.add(details);
 

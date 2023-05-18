@@ -48,7 +48,7 @@ public class TestFinal {
                     }
                     case 4 -> {
                         System.out.println("""
-                                           - This system has been developed by @justkaram 
+                                           - This system has been developed by Karam Hilles & Mohammed shoblaq
                                            - This system still needs some improvements 
                                            - Repo Link: https://github.com/justkaram/university-1st-sem 
                                            """);
